@@ -1,0 +1,294 @@
+[project]
+name = "web-tutorial"
+version = "0.1.0"
+description = "Django and FastAPI tutorials"
+requires-python = "~=3.12"
+dependencies = [
+    "fastapi>=0.115.11,<0.116",
+    "uvicorn>=0.34.0,<0.35",
+]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.9.10,<0.10",
+    "flake8>=7.1.2,<8",
+    "flake8-bandit>=4.1.1,<5",
+    "flake8-broken-line>=1.0.0,<2",
+    "flake8-comprehensions>=3.16.0,<4",
+    "flake8-debugger>=4.1.2,<5",
+    "flake8-docstrings>=1.7.0,<2",
+    "flake8-eradicate>=1.5.0,<2",
+    "flake8-isort>=6.1.2,<7",
+    "flake8-quotes>=3.4.0,<4",
+    "flake8-string-format>=0.3.0,<0.4",
+    "flake8-pyproject>=1.2.3,<2",
+    "flake8-bugbear>=24.12.12,<25",
+    "flake8-rst-docstrings>=0.3.0,<0.4",
+    "mccabe>=0.7.0,<0.8",
+    "mypy>=1.15.0,<2",
+    "pep8-naming>=0.14.1,<0.15",
+    "pre-commit>=4.1.0,<5",
+    "pytest>=8.3.5,<9",
+    "pytest-cov>=6.0.0,<7",
+    "pytest-factoryboy>=2.7.0,<3",
+    "pytest-freezegun>=0.4.2,<0.5",
+    "pytest-mock>=3.14.0,<4",
+    "types-requests>=2.32.0.20250306,<3",
+    "types-pytz>=2025.1.0.20250204,<2026",
+    "pylint>=3.3.4,<4",
+    "types-python-dateutil>=2.9.0.20241206,<3",
+    "typing_extensions>=4.12.2,<5",
+    "astor>=0.8.1,<0.9",
+    "darglint>=1.8.1,<2",
+    "polyfactory>=2.19.0,<3",
+    "pip-audit>=2.8.0,<3",
+    "pytest-xdist>=3.6.1,<4",
+    "wemake-python-styleguide>=1.1.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["backend"]
+
+[tool.isort]
+line_length = 140
+sections = [
+    "FUTURE",
+    "STDLIB",
+    # Uncomment for Django
+    #"DJANGO",
+    "THIRDPARTY",
+    "FIRSTPARTY",
+    "LOCALFOLDER"
+]
+# Uncomment for Django
+#known_django = "django"
+#profile = "django"
+multi_line_output = 3
+src_paths = "./backend"
+lines_after_imports = 2
+
+[tool.coverage.run]
+omit = [
+    "**/admin/**",
+    "**/tests/**",
+    "**/migrations/**",
+    "**/management/**",
+    "admin.py",
+    "manage.py",
+    "asgi.py",
+    "wsgi.py",
+    "celery_app.py",
+    "**/__init__.py",
+    "**/apps.py",
+    "**/background_tasks/api/**",
+    "**/background_tasks/data_migration/**"
+]
+
+[tool.coverage.report]
+fail_under = 20
+
+[tool.mypy]
+# Uncomment for Django
+#plugins = "mypy_django_plugin.main"
+exclude = "backend/tests/"
+
+[tool.flake8]
+ignore = [
+    "E800", # Found commented out code
+    "C812", # missing trailing comma
+    "D100", # Missing docstring in public module
+    "D101", # Missing docstring in public class
+    "D102", # Missing docstring in public method
+    "D103", # Missing docstring in public function
+    "D104", # Missing docstring in public package
+    "D105", # Missing docstring in magic method
+    "D106", # Missing docstring in public nested class
+    "D107", # Missing docstring in __init__
+    "D401", # First line should be in imperative mood
+    "N818", # exception name should be named with an Error suffix
+    "P103", # other string does contain unindexed parameters
+    "W291", # trailing whitespace
+    "W503", # line break before binary operator
+    "DAR101", # Missing parameter(s) in Docstring
+    "DAR101", # Missing parameter(s) in Docstring
+    "DAR201", # Missing "Returns" in Docstring
+    "DAR401", # Missing exception(s) in Raises section
+    "WPS110", # Found wrong variable name
+    "WPS111", # Found too short name
+    "WPS112", # Found private name pattern
+    "WPS115", # Found upper-case constant in a class
+    "WPS120", # Found regular name with trailing underscore
+    "WPS121", # Found usage of a variable marked as unused
+    "WPS122", # Found all unused variables definition
+    "WPS226", # Found string literal over-use
+    "WPS305", # Found `f` string
+    "WPS306", # Found class without a base class
+    "WPS237", # Found a too complex `f` string
+    "WPS323", # Found `%` string formatting
+    "WPS326", # Found implicit string concatenation
+    "WPS329", # Found useless `except` case
+    "WPS331", # Found variables that are only used for `return`:
+    "WPS337", # Found multiline conditions
+    "WPS338", # Found incorrect order of methods in a class
+    "WPS347", # Found vague import that may cause confusion
+    "WPS348", # Found a line that starts with a dot
+    "WPS360", # Found an unnecessary use of a raw string
+    "WPS404", # Found complex default value
+    "WPS407", # Found mutable module constant
+    "WPS412", # Found `__init__.py` module with logic
+    "WPS420", # Found wrong keyword
+    "WPS421", # Found wrong function call
+    "WPS428", # Found statement that has no effect (for `...`)
+    "WPS432", # Found magic number
+    "WPS433", # Found nested import
+    "WPS437", # Found protected attribute usage
+    "WPS440", # Found block variables overlap
+    "WPS441", # Found control variable used after block
+    "WPS453", # Found executable mismatch: shebang is present but the file is not executable
+    "WPS458", # Found imports collision
+    "WPS529", # Found implicit `.get()` dict usage
+    "WPS531", # Found simplifiable returning `if` condition in a function
+    "WPS602", # Found using `@staticmethod`
+    "WPS604", # Found incorrect node inside `class` body
+    "WPS608", # Found incorrect `super()` call: remove arguments
+    "WPS615", # Found unpythonic getter or sette
+]
+per-file-ignores = [
+    "**/settings/*.py:S101",
+    "**/settings/*.py:WPS407",
+    "**/settings/*.py:WPS425",
+    "**/tests/*.py:S101",
+]
+exclude = [
+    ".git",
+    "__pycache__",
+    ".venv",
+    "venv",
+    "**/tests/*",
+    "**/migrations/*",
+    "**/settings/*",
+    "snapshots",
+]
+max-arguments = 12
+max-imports = 20
+max-import-from-members = 10
+max-expressions = 12
+max-methods = 10
+max-local-variables = 20
+max-module-members = 20
+max-try-body-length = 10
+max-cognitive-average = 10
+max-cognitive-score = 30
+max-annotation-complexity = 4
+max-line-complexity = 15
+max-complexity = 15
+max-name-length = 60
+max-line-length = 140
+count = true
+
+[tool.pylint.main]
+ignore = [
+    ".git",
+    "__pycache__",
+    ".venv",
+    "venv",
+    "tests",
+    "migrations",
+    "settings",
+    "snapshots",
+]
+
+[tool.pylint.master]
+
+[tool.pylint.basic]
+good-names = ["i", "j", "k", "v", "ex", "pk", "r", "_"]
+
+[tool.pylint.classes]
+# Warn about protected attribute access inside special methods
+# check-protected-access-in-special-methods =
+# List of method names used to declare (i.e. assign) instance attributes.
+defining-attr-methods = ["__init__", "__new__", "setUp", "asyncSetUp", "__post_init__"]
+# List of member names, which should be excluded from the protected access
+# warning.
+exclude-protected = ["_asdict", "_fields", "_replace", "_source", "_make", "os._exit"]
+# List of valid names for the first argument in a class method.
+valid-classmethod-first-arg = ["cls"]
+# List of valid names for the first argument in a metaclass class method.
+valid-metaclass-classmethod-first-arg = ["mcs"]
+
+[tool.pylint.design]
+max-args = 12
+max-positional-arguments = 10
+max-locals = 20
+max-attributes = 30
+max-parents = 20
+min-public-methods = 0
+max-public-methods = 10
+max-branches = 15
+max-statements = 50
+max-bool-expr = 10
+max-returns = 10
+
+[tool.pylint.format]
+max-line-length = 140
+max-module-lines = 2000
+
+[tool.pylint."messages control"]
+confidence = [
+    "HIGH",
+    "CONTROL_FLOW",
+    "INFERENCE",
+    "INFERENCE_FAILURE",
+    "UNDEFINED",
+]
+disable = [
+    "expression-not-assigned",
+    "missing-module-docstring",
+    "missing-class-docstring",
+    "missing-function-docstring",
+    "unused-argument",
+    "redefined-builtin",
+    "import-outside-toplevel",
+    "no-else-return",
+    "unspecified-encoding",
+    "duplicate-code",
+    "super-with-arguments",
+    "unsubscriptable-object",
+    "abstract-method",
+]
+
+[tool.pylint.typecheck]
+ignored-classes = [
+    "optparse.Values",
+    "thread._local",
+    "_thread._local",
+    "argparse.Namespace",
+    "orjson",
+]
+
+[tool.pytest.ini_options]
+# Uncomment for Django
+#DJANGO_SETTINGS_MODULE = "settings"
+#django_find_project = true
+python_files = [
+    "tests/test_*.py"
+]
+testpaths = [
+    "backend/tests"
+]
+log_cli = false
+log_cli_level = "INFO"
+addopts = "--cov=backend --cov-report=xml --cov-report=term"
+norecursedirs = [
+    ".git",
+    ".venv",
+    "__pycache__"
+]
+filterwarnings = [
+    "ignore::DeprecationWarning",
+    "ignore::RuntimeWarning:",
+]

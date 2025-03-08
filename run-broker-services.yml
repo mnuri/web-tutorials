@@ -1,0 +1,99 @@
+version: "3.9"
+
+
+x-zookeeper-variables: &x-zookeeper-variables
+  ZOOKEEPER_CLIENT_PORT: 2181
+  ZOOKEEPER_TICK_TIME: 2000
+
+x-kafka-broker-variables: &x-kafka-broker-variables
+  KAFKA_BROKER_ID: 1
+  KAFKA_CREATE_TOPICS: "my-topic"
+  KAFKA_NUM_PARTITIONS: 2
+  KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+  KAFKA_ADVERTISED_HOST_NAME: kafka-broker.lvh.me
+  KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-broker.lvh.me:29092
+  KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
+  KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+  KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+  KAFKA_MESSAGE_MAX_BYTES: 504857600
+  KAFKA_SOCKET_REQUEST_MAX_BYTES: 504857600
+  KAFKA_MAX_REQUEST_SIZE: 504857600
+
+x-kafka-ui-variables: &x-kafka-ui-variables
+  KAFKA_CLUSTERS_0_NAME: local
+  KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka-broker.lvh.me:29092
+  KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
+
+x-rabbitmq-variables: &x-rabbitmq-variables
+  RABBITMQ_DEFAULT_USER: "guest"
+  RABBITMQ_DEFAULT_PASS: "guest"
+
+
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    environment:
+      <<: *x-zookeeper-variables
+    ports:
+      - "22181:2181"
+    networks:
+      app_network:
+        aliases:
+          - zookeeper.lvh.me
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      - zookeeper
+    ports:
+      - "29092:29092"
+    hostname: kafka-broker.lvh.me
+    environment:
+      <<: *x-kafka-broker-variables
+    networks:
+      app_network:
+        aliases:
+          - kafka-broker.lvh.me
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui
+    container_name: kafka-ui
+    ports:
+      - "8090:8080"
+    restart: always
+    environment:
+      <<: *x-kafka-ui-variables
+    links:
+      - kafka
+      - zookeeper
+    networks:
+      app_network:
+        aliases:
+          - kafka-ui.lvh.me
+
+  rabbitmq:
+    image: rabbitmq:3.13-management
+    environment:
+      <<: *x-rabbitmq-variables
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    networks:
+      app_network:
+        aliases:
+          - rabbitmq.lvh.me
+
+  mailcatcher:
+    image: schickling/mailcatcher:latest
+    ports:
+      - "1080:1080"
+      - "1025:1025"
+    networks:
+      app_network:
+        aliases:
+          - mailcatcher.lvh.me
+
+
+networks:
+  app_network:
+    external: false

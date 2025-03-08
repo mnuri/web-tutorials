@@ -1,0 +1,64 @@
+name: linters
+
+on:
+  - pull_request
+
+permissions:
+  contents: read
+  pull-requests: read
+  checks: write
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      matrix:
+        python-version:
+          - '3.12'
+          - '3.13'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install the latest version of uv
+        uses: astral-sh/setup-uv@v5
+      - name: Run linters & friends
+        run: make ci-lint
+
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      matrix:
+        python-version:
+          - '3.12'
+          - '3.13'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install the latest version of uv
+        uses: astral-sh/setup-uv@v5
+      - name: Run tests
+        run: make ci-test
+
+  pip-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      matrix:
+        python-version:
+          - '3.12'
+          - '3.13'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install the latest version of uv
+        uses: astral-sh/setup-uv@v5
+      - name: Analysing the dependencies with pip-audit
+        run: make ci-deps-audit

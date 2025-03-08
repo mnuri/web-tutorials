@@ -1,0 +1,47 @@
+version: "3.9"
+
+
+x-db-environment: &x-db-environment
+  POSTGRES_SSL_MODE: "disable"
+  POSTGRES_HOST: "db"
+  POSTGRES_PORT: "5432"
+  POSTGRES_DB: "db"
+  POSTGRES_PASSWORD: "myAwEsOm3pa55@w0rd"
+  POSTGRES_USER: "root"
+
+
+services:
+  db:
+    image: postgres:latest
+    environment:
+      <<: *x-db-environment
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      app_network:
+        aliases:
+          - db.lvh.me
+
+  keydb:
+    image: eqalpha/keydb:latest
+    ports:
+      - "6379:6379"
+    volumes:
+      - keydb_data:/data
+    networks:
+      app_network:
+        aliases:
+          - keydb.lvh.me
+
+
+networks:
+  app_network:
+    external: false
+
+volumes:
+  db_data:
+  rabbitmq_data:
+  keydb_data:
+  s3_data:
