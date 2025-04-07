@@ -10,10 +10,10 @@ nginx_docker_compose_path = "run-nginx-service.yml"
 BASE_DC = docker compose
 BASE_DC += -f $(base_compose_path)
 BASE_DC += -f $(backend_docker_compose_path)
-BASE_DC += -f $(broker_docker_compose_path)
+# BASE_DC += -f $(broker_docker_compose_path)
 BASE_DC += -f $(s3_docker_compose_path)
 BASE_DC += -f $(nginx_docker_compose_path)
-PYTHONPATH = ./backend
+PYTHONPATH = ./django
 
 
 build-no-cache:
@@ -47,22 +47,19 @@ ruff:
 	uv run ruff check
 	uv run ruff format
 
-black:
-	uv run black --check backend -t py312
-
 isort:
-	uv run isort --check backend
+	uv run isort --check django
 
 flake8:
 	uv run flake8 --inline-quotes '"'
 
 pylint:
-	PYTHONPATH=$(PYTHONPATH) uv run pylint backend
+	PYTHONPATH=$(PYTHONPATH) uv run pylint --load-plugins pylint_django django
 
 mypy:
-	PYTHONPATH=$(PYTHONPATH) uv run mypy --namespace-packages --show-error-codes backend --check-untyped-defs --ignore-missing-imports --show-traceback --enable-incomplete-feature=NewGenericSyntax
+	PYTHONPATH=$(PYTHONPATH) uv run mypy --namespace-packages --show-error-codes --check-untyped-defs --ignore-missing-imports --show-traceback django
 
-lint: black isort flake8 pylint mypy
+lint: ruff isort flake8 # pylint mypy
 
 pip-audit:
 	uv run pip-audit

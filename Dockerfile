@@ -31,7 +31,7 @@ RUN chmod +x /start.sh \
     && mkdir /static \
     && chown -R backend:backend /static
 
-COPY backend .
+COPY django .
 
 # Establish the runtime user (with no password and no sudo)
 USER backend
