@@ -45,6 +45,7 @@ dev = [
     "wemake-python-styleguide>=1.1.0",
     "pytest-django>=4.11.1",
     "pylint-django>=2.6.1",
+    "django-stubs>=5.1.3",
 ]
 
 [build-system]
@@ -94,7 +95,12 @@ fail_under = 90
 [tool.mypy]
 # Uncomment for Django
 plugins = "mypy_django_plugin.main"
-exclude = "django/**/tests.py"
+exclude = "django/*/tests.py"
+
+[tool.django-stubs]
+django_settings_module = "fast_track.settings"
+strict_settings = true
+
 
 [tool.flake8]
 ignore = [
@@ -261,6 +267,7 @@ disable = [
     "super-with-arguments",
     "unsubscriptable-object",
     "abstract-method",
+    "wrong-import-order",
 ]
 
 [tool.pylint.typecheck]

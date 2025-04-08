@@ -54,12 +54,12 @@ flake8:
 	uv run flake8 --inline-quotes '"'
 
 pylint:
-	PYTHONPATH=$(PYTHONPATH) uv run pylint --load-plugins pylint_django django
+	PYTHONPATH=$(PYTHONPATH) DJANGO_SETTINGS_MODULE="fast_track.settings" uv run pylint --load-plugins pylint_django --recursive=y django
 
 mypy:
 	PYTHONPATH=$(PYTHONPATH) uv run mypy --namespace-packages --show-error-codes --check-untyped-defs --ignore-missing-imports --show-traceback django
 
-lint: ruff isort flake8 # pylint mypy
+lint: ruff isort flake8 pylint mypy
 
 pip-audit:
 	uv run pip-audit
