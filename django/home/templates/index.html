@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block header %}Home{% endblock header %}
+
+{% block content %}
+    <div class="row">
+        <ul class="list-group">
+            <li class="list-group-item"><a href="{% url 'home:hello' %}">Hello</a></li>
+            <li class="list-group-item"><a href="{% url 'polls:index' %}">Polls</a></li>
+        </ul>
+    </div>
+{% endblock content %}

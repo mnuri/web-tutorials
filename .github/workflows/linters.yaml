@@ -35,6 +35,18 @@ jobs:
         python-version:
           - '3.12'
           - '3.13'
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -44,6 +56,10 @@ jobs:
         uses: astral-sh/setup-uv@v5
       - name: Run tests
         run: make ci-test
+        env:
+          POSTGRES_HOST: 127.0.0.1
+          POSTGRES_PORT: 5432
+
 
   pip-audit:
     runs-on: ubuntu-latest

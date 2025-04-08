@@ -99,7 +99,8 @@ all: format lint test pip-audit
 
 ci-lint: sync-deps lint
 
-ci-test: sync-deps check-env test
+ci-test: sync-deps
+	PYTHONPATH=$(PYTHONPATH) uv run pytest -n 2
 
 ci-deps-audit: sync-deps pip-audit
 
