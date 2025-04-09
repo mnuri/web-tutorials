@@ -11,6 +11,8 @@ services:
     platform: linux/amd64
     build:
       context: .
+    volumes:
+      - ./django:/app
     environment:
       <<: *x-backend-app-environment
     command: [ "/wait-for-it.sh", "db:5432", "--", "/start.sh" ]

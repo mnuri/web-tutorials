@@ -5,7 +5,7 @@ ENV PYTHONUNBUFFERED 1 \
     CRYPTOGRAPHY_DONT_BUILD_RUST 1
 
 RUN apt-get update \
-    && apt-get install -y libmagic1 gcc build-essential nodejs curl ca-certificates --no-install-recommends \
+    && apt-get install -y libmagic1 gcc build-essential nodejs curl ca-certificates libpq-dev --no-install-recommends \
     && pip install --upgrade --no-cache-dir pip wheel setuptools poetry
 
 WORKDIR /app

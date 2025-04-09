@@ -16,6 +16,14 @@ BASE_DC += -f $(nginx_docker_compose_path)
 PYTHONPATH = ./django
 
 
+# Setup
+
+setup:
+	sync-deps
+	pre-commit-install
+
+# Docker
+
 build-no-cache:
 	$(BASE_DC) build --no-cache
 
