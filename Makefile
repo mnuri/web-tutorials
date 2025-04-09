@@ -15,6 +15,11 @@ BASE_DC += -f $(s3_docker_compose_path)
 BASE_DC += -f $(nginx_docker_compose_path)
 PYTHONPATH = ./django
 
+DB_CONFIG = POSTGRES_HOST="db.lvh.me"
+DB_CONFIG += POSTGRES_PORT="5432"
+DB_CONFIG += POSTGRES_DB="db"
+DB_CONFIG += POSTGRES_PASSWORD="myAwEsOm3pa55@w0rd"
+DB_CONFIG += POSTGRES_USER="root"
 
 # Setup
 
@@ -73,7 +78,10 @@ pip-audit:
 	uv run pip-audit
 
 test:
-	PYTHONPATH=$(PYTHONPATH) uv run pytest -n 2
+	${DB_CONFIG} PYTHONPATH=$(PYTHONPATH) uv run pytest -n 2
+
+run:
+	${DB_CONFIG} uv run python django/manage.py runserver 0.0.0.0:8000
 
 sync-deps:
 	uv sync --frozen --no-cache --no-editable

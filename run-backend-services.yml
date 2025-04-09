@@ -5,6 +5,13 @@ x-backend-app-environment: &x-backend-app-environment
   LOG_LEVEL: "DEBUG"
   VERSION: "0.1.0"
 
+x-db-environment: &x-db-environment
+  POSTGRES_HOST: "db"
+  POSTGRES_PORT: "5432"
+  POSTGRES_DB: "db"
+  POSTGRES_PASSWORD: "myAwEsOm3pa55@w0rd"
+  POSTGRES_USER: "root"
+
 
 services:
   backend-app:
@@ -14,7 +21,10 @@ services:
     volumes:
       - ./django:/app
     environment:
-      <<: *x-backend-app-environment
+      <<:
+        - *x-backend-app-environment
+        - *x-db-environment
+
     command: [ "/wait-for-it.sh", "db:5432", "--", "/start.sh" ]
     ports:
       - "8000:8000"
