@@ -15,7 +15,15 @@ BASE_DC += -f $(s3_docker_compose_path)
 BASE_DC += -f $(nginx_docker_compose_path)
 PYTHONPATH = ./django
 
-include .env
+ENV_FILE = .env
+ENV_EXAMPLE_FILE = .env.sample
+
+# Rule to check if .env exists
+check-env:
+	@if [ ! -f $(ENV_FILE) ]; then \
+		echo "$(ENV_FILE) does not exist. Using $(ENV_EXAMPLE_FILE) instead."; \
+		cp $(ENV_EXAMPLE_FILE) $(ENV_FILE); \
+	fi
 
 # Setup
 
@@ -76,10 +84,10 @@ lint: ruff isort flake8 pylint mypy
 pip-audit:
 	uv run pip-audit
 
-test:
+test: check-env
 	PYTHONPATH=$(PYTHONPATH) uv run pytest -n 2
 
-run:
+run: check-env
 	uv run python django/manage.py runserver 0.0.0.0:8000
 
 sync-deps:
@@ -91,7 +99,7 @@ all: format lint test pip-audit
 
 ci-lint: sync-deps lint
 
-ci-test: sync-deps test
+ci-test: sync-deps check-env test
 
 ci-deps-audit: sync-deps pip-audit
 
