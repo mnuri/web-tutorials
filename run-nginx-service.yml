@@ -9,10 +9,10 @@ services:
     ports:
       - "80:80"
     depends_on:
-      - rabbitmq
-      - kafka-ui
       - s3
-      - mailcatcher
+      # - rabbitmq
+      # - kafka-ui
+      # - mailcatcher
     networks:
       app_network:
         aliases:

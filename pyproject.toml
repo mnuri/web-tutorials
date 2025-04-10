@@ -4,8 +4,9 @@ version = "0.1.0"
 description = "Django and FastAPI tutorials"
 requires-python = "~=3.12"
 dependencies = [
-    "fastapi>=0.115.11,<0.116",
-    "uvicorn>=0.34.0,<0.35",
+    "django>=5.2",
+    "dotenv>=0.9.9",
+    "psycopg2>=2.9.10",
 ]
 
 [dependency-groups]
@@ -44,6 +45,9 @@ dev = [
     "pip-audit>=2.8.0,<3",
     "pytest-xdist>=3.6.1,<4",
     "wemake-python-styleguide>=1.1.0",
+    "pytest-django>=4.11.1",
+    "pylint-django>=2.6.1",
+    "django-stubs>=5.1.3",
 ]
 
 [build-system]
@@ -58,17 +62,16 @@ line_length = 140
 sections = [
     "FUTURE",
     "STDLIB",
-    # Uncomment for Django
-    #"DJANGO",
+    "DJANGO",
     "THIRDPARTY",
     "FIRSTPARTY",
     "LOCALFOLDER"
 ]
-# Uncomment for Django
-#known_django = "django"
-#profile = "django"
+
+known_django = "django"
+profile = "django"
 multi_line_output = 3
-src_paths = "./backend"
+src_paths = "django"
 lines_after_imports = 2
 
 [tool.coverage.run]
@@ -89,12 +92,17 @@ omit = [
 ]
 
 [tool.coverage.report]
-fail_under = 20
+fail_under = 90
 
 [tool.mypy]
 # Uncomment for Django
-#plugins = "mypy_django_plugin.main"
-exclude = "backend/tests/"
+plugins = "mypy_django_plugin.main"
+exclude = "django/*/tests.py"
+
+[tool.django-stubs]
+django_settings_module = "fast_track.settings"
+strict_settings = true
+
 
 [tool.flake8]
 ignore = [
@@ -168,7 +176,8 @@ exclude = [
     "__pycache__",
     ".venv",
     "venv",
-    "**/tests/*",
+    # "**/tests/*",
+    "**/tests.py",
     "**/migrations/*",
     "**/settings/*",
     "snapshots",
@@ -191,6 +200,7 @@ max-line-length = 140
 count = true
 
 [tool.pylint.main]
+source-roots = "django"
 ignore = [
     ".git",
     "__pycache__",
@@ -259,6 +269,7 @@ disable = [
     "super-with-arguments",
     "unsubscriptable-object",
     "abstract-method",
+    "wrong-import-order",
 ]
 
 [tool.pylint.typecheck]
@@ -271,18 +282,17 @@ ignored-classes = [
 ]
 
 [tool.pytest.ini_options]
-# Uncomment for Django
-#DJANGO_SETTINGS_MODULE = "settings"
-#django_find_project = true
+DJANGO_SETTINGS_MODULE = "fast_track.settings"
+django_find_project = true
 python_files = [
-    "tests/test_*.py"
+    "tests.py"
 ]
 testpaths = [
-    "backend/tests"
+    "django"
 ]
 log_cli = false
 log_cli_level = "INFO"
-addopts = "--cov=backend --cov-report=xml --cov-report=term"
+addopts = "--cov=django --cov-report=xml --cov-report=term"
 norecursedirs = [
     ".git",
     ".venv",

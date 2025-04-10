@@ -5,14 +5,17 @@ x-backend-app-environment: &x-backend-app-environment
   LOG_LEVEL: "DEBUG"
   VERSION: "0.1.0"
 
-
 services:
   backend-app:
     platform: linux/amd64
     build:
       context: .
+    volumes:
+      - ./django:/app
     environment:
       <<: *x-backend-app-environment
+    env_file:
+      - .env
     command: [ "/wait-for-it.sh", "db:5432", "--", "/start.sh" ]
     ports:
       - "8000:8000"

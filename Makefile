@@ -10,11 +10,28 @@ nginx_docker_compose_path = "run-nginx-service.yml"
 BASE_DC = docker compose
 BASE_DC += -f $(base_compose_path)
 BASE_DC += -f $(backend_docker_compose_path)
-BASE_DC += -f $(broker_docker_compose_path)
+# BASE_DC += -f $(broker_docker_compose_path)
 BASE_DC += -f $(s3_docker_compose_path)
 BASE_DC += -f $(nginx_docker_compose_path)
-PYTHONPATH = ./backend
+PYTHONPATH = ./django
 
+ENV_FILE = .env
+ENV_EXAMPLE_FILE = .env.sample
+
+# Rule to check if .env exists
+check-env:
+	@if [ ! -f $(ENV_FILE) ]; then \
+		echo "$(ENV_FILE) does not exist. Using $(ENV_EXAMPLE_FILE) instead."; \
+		cp $(ENV_EXAMPLE_FILE) $(ENV_FILE); \
+	fi
+
+# Setup
+
+setup:
+	sync-deps
+	pre-commit-install
+
+# Docker
 
 build-no-cache:
 	$(BASE_DC) build --no-cache
@@ -24,6 +41,9 @@ build:
 
 up:
 	$(BASE_DC) up -d
+
+up-db:
+	$(BASE_DC) up -d db
 
 down:
 	$(BASE_DC) down --remove-orphans
@@ -47,28 +67,28 @@ ruff:
 	uv run ruff check
 	uv run ruff format
 
-black:
-	uv run black --check backend -t py312
-
 isort:
-	uv run isort --check backend
+	uv run isort --check django
 
 flake8:
 	uv run flake8 --inline-quotes '"'
 
 pylint:
-	PYTHONPATH=$(PYTHONPATH) uv run pylint backend
+	PYTHONPATH=$(PYTHONPATH) DJANGO_SETTINGS_MODULE="fast_track.settings" uv run pylint --load-plugins pylint_django --recursive=y django
 
 mypy:
-	PYTHONPATH=$(PYTHONPATH) uv run mypy --namespace-packages --show-error-codes backend --check-untyped-defs --ignore-missing-imports --show-traceback --enable-incomplete-feature=NewGenericSyntax
+	PYTHONPATH=$(PYTHONPATH) uv run mypy --namespace-packages --show-error-codes --check-untyped-defs --ignore-missing-imports --show-traceback django
 
-lint: black isort flake8 pylint mypy
+lint: ruff isort flake8 pylint mypy
 
 pip-audit:
 	uv run pip-audit
 
-test:
+test: check-env
 	PYTHONPATH=$(PYTHONPATH) uv run pytest -n 2
+
+run: check-env
+	uv run python django/manage.py runserver 0.0.0.0:8000
 
 sync-deps:
 	uv sync --frozen --no-cache --no-editable
@@ -79,7 +99,7 @@ all: format lint test pip-audit
 
 ci-lint: sync-deps lint
 
-ci-test: sync-deps test
+ci-test: sync-deps check-env test
 
 ci-deps-audit: sync-deps pip-audit
 

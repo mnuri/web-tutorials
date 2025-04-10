@@ -5,7 +5,7 @@ ENV PYTHONUNBUFFERED 1 \
     CRYPTOGRAPHY_DONT_BUILD_RUST 1
 
 RUN apt-get update \
-    && apt-get install -y libmagic1 gcc build-essential nodejs curl ca-certificates --no-install-recommends \
+    && apt-get install -y libmagic1 gcc build-essential nodejs curl ca-certificates libpq-dev --no-install-recommends \
     && pip install --upgrade --no-cache-dir pip wheel setuptools poetry
 
 WORKDIR /app
@@ -19,6 +19,7 @@ ENV UV_PROJECT_ENVIRONMENT="/usr/local/"
 # will be cached if no changes in this files
 COPY uv.lock .
 COPY pyproject.toml .
+COPY .env.sample .env
 
 COPY /scripts/start.sh /start.sh
 COPY /scripts/wait-for-it.sh /wait-for-it.sh
@@ -31,7 +32,7 @@ RUN chmod +x /start.sh \
     && mkdir /static \
     && chown -R backend:backend /static
 
-COPY backend .
+COPY django .
 
 # Establish the runtime user (with no password and no sudo)
 USER backend
