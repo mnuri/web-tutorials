@@ -34,18 +34,27 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["backend-app.lvh.me"]
 
+# Rest Framework
+
+REST_FRAMEWORK = {
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 5,
+}
+
 
 # Application definition
 
 INSTALLED_APPS = [
     "home.apps.HomeConfig",
     "polls.apps.PollsConfig",
+    "pastebin.apps.PastebinConfig",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "rest_framework",
 ]
 
 MIDDLEWARE = [
@@ -91,7 +100,10 @@ DATABASES = {
         "PASSWORD": os.getenv("POSTGRES_PASSWORD", "postgres"),
         "HOST": os.getenv("POSTGRES_HOST", "localhost"),
         "PORT": os.getenv("POSTGRES_PORT", "5432"),
-    }
+    },
+    "TEST": {
+        "NAME": "test_db",
+    },
 }
 
 # Password validation
