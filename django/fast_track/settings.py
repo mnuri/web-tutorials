@@ -101,9 +101,6 @@ DATABASES = {
         "HOST": os.getenv("POSTGRES_HOST", "localhost"),
         "PORT": os.getenv("POSTGRES_PORT", "5432"),
     },
-    "TEST": {
-        "NAME": "test_db",
-    },
 }
 
 # Password validation
