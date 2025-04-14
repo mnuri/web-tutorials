@@ -295,7 +295,7 @@ testpaths = [
 ]
 log_cli = false
 log_cli_level = "INFO"
-addopts = "--cov=django --cov-report=xml --cov-report=term --reuse-db --create-db"
+addopts = "--cov=django --cov-report=xml --cov-report=term"
 norecursedirs = [
     ".git",
     ".venv",
