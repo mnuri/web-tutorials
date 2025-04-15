@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
+from django.http import HttpRequest
 
 from rest_framework import permissions, renderers, viewsets
 from rest_framework.decorators import action, api_view
@@ -36,11 +37,11 @@ class SnippetViewSet(viewsets.ModelViewSet):
             PlainTextRenderer,
         ],
     )
-    def highlight(self, request, *args, **kwargs) -> Response:
+    def highlight(self, request: HttpRequest, pk: int | None = None) -> Response:
         snippet: Snippet = self.get_object()
         return Response(snippet.highlighted)
 
-    def perform_create(self, serializer) -> None:
+    def perform_create(self, serializer: SnippetSerializer) -> None:
         serializer.save(owner=self.request.user)
 
 

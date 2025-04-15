@@ -7,5 +7,5 @@ class PlainTextRenderer(renderers.BaseRenderer):
     media_type = "text/plain"
     format = "txt"
 
-    def render(self, data, accepted_media_type=None, renderer_context=None) -> bytes:
+    def render(self, data: str, accepted_media_type=None, renderer_context=None) -> str:
         return smart_str(data, encoding=self.charset)
