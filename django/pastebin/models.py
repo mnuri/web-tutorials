@@ -7,23 +7,43 @@ from pygments.lexers import get_all_lexers, get_lexer_by_name
 from pygments.styles import get_all_styles
 
 
-def load_lexers():
+type LanguageName = str
+type LanguageAlias = str
+type LanguageFilename = str
+type LanguageMimeType = str
+type StyleName = str
+
+type LanguageLexer = tuple[
+    LanguageName,
+    tuple[LanguageAlias],
+    tuple[LanguageFilename],
+    tuple[LanguageMimeType],
+]
+type FormatterLanguage = tuple[LanguageAlias, LanguageName]
+type FormatterStyle = tuple[StyleName, StyleName]
+
+
+def load_lexers() -> list[LanguageLexer]:
     return [item for item in get_all_lexers() if item[1]]
 
 
-def load_lenguages():
-    items = [(item[1][0], item[0]) for item in LEXERS]
+def load_languages() -> list[FormatterLanguage]:
+    items: list[FormatterLanguage] = [(item[1][0], item[0]) for item in LEXERS]
     return sorted(items)
 
 
-def load_styles():
-    items = [(item, item) for item in get_all_styles()]
+def load_styles() -> list[FormatterStyle]:
+    items: list[FormatterStyle] = [(item, item) for item in get_all_styles()]
     return sorted(items)
 
 
 LEXERS = load_lexers()
-LANGUAGE_CHOICES = load_lenguages()
+LANGUAGE_CHOICES = load_languages()
 STYLE_CHOICES = load_styles()
+
+DEFAULT_TITLE = ""
+DEFAULT_LANGUAGE = "python"
+DEFAULT_STYLE = "friendly"
 
 
 def get_formatter(linenos: bool | str, title: str, style: str) -> HtmlFormatter:
@@ -38,17 +58,19 @@ class Snippet(models.Model):
         settings.AUTH_USER_MODEL, related_name="snippets", on_delete=models.CASCADE
     )
 
-    created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     code = models.TextField()
     highlighted = models.TextField()
 
-    title = models.CharField(max_length=100, blank=True, default="")
+    title = models.CharField(max_length=100, blank=True, default=DEFAULT_TITLE)
     language = models.CharField(
-        choices=LANGUAGE_CHOICES, default="python", max_length=100
+        choices=LANGUAGE_CHOICES, default=DEFAULT_LANGUAGE, max_length=100
     )
-    style = models.CharField(choices=STYLE_CHOICES, default="friendly", max_length=100)
+    style = models.CharField(
+        choices=STYLE_CHOICES, default=DEFAULT_STYLE, max_length=100
+    )
     linenos = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
@@ -60,4 +82,4 @@ class Snippet(models.Model):
         super().save(*args, **kwargs)
 
     class Meta:
-        ordering = ["created"]
+        ordering = ["created_at"]

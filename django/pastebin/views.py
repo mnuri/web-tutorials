@@ -8,11 +8,12 @@ from rest_framework.reverse import reverse
 
 from pastebin.models import Snippet
 from pastebin.permissions import IsOwnerOrReadOnly
+from pastebin.renderers import PlainTextRenderer
 from pastebin.serializers import GroupSerializer, SnippetSerializer, UserSerializer
 
 
 @api_view(["GET"])
-def api_root(request, format=None):
+def api_root(request, format=None) -> Response:
     return Response(
         {
             "users": reverse("user-list", request=request, format=format),
@@ -27,7 +28,14 @@ class SnippetViewSet(viewsets.ModelViewSet):
     serializer_class = SnippetSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
-    @action(detail=True, renderer_classes=[renderers.StaticHTMLRenderer])
+    @action(
+        detail=True,
+        renderer_classes=[
+            renderers.BrowsableAPIRenderer,
+            renderers.StaticHTMLRenderer,
+            PlainTextRenderer,
+        ],
+    )
     def highlight(self, request, *args, **kwargs) -> Response:
         snippet: Snippet = self.get_object()
         return Response(snippet.highlighted)

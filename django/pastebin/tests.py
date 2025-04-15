@@ -245,3 +245,14 @@ def test_snippets_highlight(client, sample_user):
     response = client.get(url)
 
     assert response.status_code == 200
+    assert response["Content-Type"] == "text/html; charset=utf-8"
+
+
+@pytest.mark.django_db
+def test_snippets_highlight_txt(client, sample_user):
+    snippet = Snippet.objects.create(title="test", code="test", owner=sample_user)
+    url = reverse("snippet-highlight", args=(snippet.id,))
+    response = client.get(url, {"format": "txt"})
+
+    assert response.status_code == 200
+    assert response["Content-Type"] == "text/plain; charset=utf-8"
