@@ -24,6 +24,7 @@ urlpatterns: list[URLPattern | URLResolver] = [
     path("", include("home.urls")),
     path("polls/", include("polls.urls")),
     path("admin/", admin.site.urls),
+    path("api/", include("pastebin.urls")),
 ]
 
 if not settings.TESTING:
